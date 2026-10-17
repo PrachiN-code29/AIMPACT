@@ -1,0 +1,2311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vyapar Sathi AI - Executive Command Center & Smart POS</title>
+<style>
+:root {
+  --primary: #4338ca;
+  --primary-light: #6366f1;
+  --primary-bg: #eef2ff;
+  --dark: #0f172a;
+  --sidebar-bg: #1e1b4b;
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text: #1e293b;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --green: #10b981;
+  --green-bg: #d1fae5;
+  --red: #ef4444;
+  --red-bg: #fee2e2;
+  --amber: #f59e0b;
+  --amber-bg: #fef3c7;
+  --radius: 10px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* ================= 1. LOGIN PAGE VIEW ================= */
+#loginSection {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+  padding: 20px;
+}
+.login-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 16px;
+  padding: 36px 30px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+  text-align: left;
+}
+.login-card .logo-banner {
+  text-align: center;
+  margin-bottom: 22px;
+}
+.login-card .logo-banner h1 {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.login-card .logo-banner p {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.login-input-group {
+  margin-bottom: 16px;
+}
+.login-input-group label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 6px;
+}
+.login-input-group input {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  background: #f8fafc;
+}
+.login-input-group input:focus {
+  background: #fff;
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+}
+.btn-login {
+  width: 100%;
+  padding: 12px;
+  background: var(--primary);
+  color: #fff;
+  border: 0;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-login:hover { opacity: 0.92; }
+.btn-demo-login {
+  width: 100%;
+  padding: 10px;
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.btn-demo-login:hover { background: #e2e8f0; }
+
+/* ================= 2. MAIN APP VIEW ================= */
+#appSection { display: none; }
+.app-container { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 245px;
+  background: var(--sidebar-bg);
+  color: #fff;
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  z-index: 100;
+}
+.sidebar .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 16px;
+}
+.sidebar .brand h2 { font-size: 17px; font-weight: 700; color: #fff; }
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  margin: 3px 0;
+  background: transparent;
+  color: #cbd5e1;
+  border: 0;
+  border-radius: 8px;
+  font-size: 13.5px;
+  cursor: pointer;
+  text-align: left;
+  transition: all .15s;
+}
+.nav-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.nav-btn.active { background: var(--primary); color: #fff; font-weight: 600; box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
+.sidebar-footer { margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 12px; }
+
+/* Main Content */
+.main-content {
+  margin-left: 245px;
+  flex: 1;
+  padding: 20px 28px;
+  max-width: 1550px;
+}
+/* Top Header */
+.top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.top-header .title-area h1 { font-size: 22px; font-weight: 700; color: var(--dark); }
+.top-header .title-area .greeting-text { font-size: 14px; font-weight: 600; color: var(--primary); }
+.header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+/* Status Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.badge-live { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+.badge-offline { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.badge-health { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+
+/* Sticky KPI Ribbon */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.kpi-card {
+  background: var(--card-bg);
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 4px; height: 100%;
+}
+.kpi-card.blue::before { background: var(--primary); }
+.kpi-card.green::before { background: var(--green); }
+.kpi-card.amber::before { background: var(--amber); }
+.kpi-card.red::before { background: var(--red); }
+.kpi-card .kpi-label { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.kpi-card .kpi-val { font-size: 24px; font-weight: 700; color: var(--dark); margin: 6px 0 2px; }
+.kpi-card .kpi-sub { font-size: 11.5px; color: var(--muted); }
+
+/* Common Elements */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.card-header h3 { font-size: 15.5px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+.btn {
+  background: var(--primary);
+  color: white;
+  border: 0;
+  padding: 8px 14px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity .15s;
+}
+.btn:hover { opacity: 0.9; }
+.btn-sm { padding: 6px 11px; font-size: 12px; }
+.btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+.btn-secondary:hover { background: #e2e8f0; }
+.btn-success { background: #10b981; }
+.btn-danger { background: #ef4444; }
+.btn-outline-danger { background: transparent; color: #ef4444; border: 1px solid #fca5a5; }
+.btn-outline-danger:hover { background: #fee2e2; }
+
+/* Grid systems */
+.row { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.two-col { display: grid; grid-template-columns: 1.25fr 1fr; gap: 18px; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; align-items: flex-end; }
+.form-group { margin-bottom: 8px; }
+label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; }
+input, select, textarea {
+  width: 100%;
+  padding: 8px 11px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-size: 13px;
+  background: white;
+  color: var(--text);
+  outline: none;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--primary-light); box-shadow: 0 0 0 2px rgba(99,102,241,0.15); }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin-top: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; padding: 9px 12px; background: #f8fafc; color: var(--muted); font-size: 11.5px; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+tr:hover td { background: #fbfcfe; }
+.tag { padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; display: inline-block; }
+.tag-red { background: var(--red-bg); color: var(--red); }
+.tag-green { background: var(--green-bg); color: var(--green); }
+.tag-amber { background: var(--amber-bg); color: #d97706; }
+
+/* Tab Switching */
+.tab-pane { display: none; }
+.tab-pane.active { display: block; animation: fadeIn .2s ease-in; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* AI Advisor Card */
+.ai-box {
+  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+  border: 1px solid #ddd6fe;
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.ai-response {
+  background: white;
+  border-radius: 8px;
+  padding: 14px;
+  margin-top: 10px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  border-left: 4px solid var(--primary);
+  white-space: pre-line;
+}
+.mic-pulse {
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
+  border-color: #f87171 !important;
+  animation: pulse 1.2s infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+}
+
+/* Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+}
+.modal-overlay.open { display: flex; }
+.modal-content {
+  background: white;
+  width: 100%;
+  max-width: 550px;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Bill Print & Logo Styling */
+#printableReceipt {
+  background: #fff;
+  border: 1px dashed #cbd5e1;
+  padding: 20px;
+  border-radius: 8px;
+  font-family: 'Courier New', Courier, monospace;
+}
+.receipt-logo-container {
+  text-align: center;
+  margin-bottom: 8px;
+}
+.receipt-logo-img {
+  max-width: 90px;
+  max-height: 70px;
+  object-fit: contain;
+  margin-bottom: 4px;
+}
+.upi-qr-box {
+  text-align: center;
+  margin: 12px 0 6px;
+  padding: 8px;
+  background: #fafafa;
+  border: 1px dashed #ccc;
+  border-radius: 6px;
+}
+.upi-qr-box img {
+  width: 95px;
+  height: 95px;
+  margin-bottom: 4px;
+}
+@media print {
+  body * { visibility: hidden; }
+  #printableReceipt, #printableReceipt * { visibility: visible; }
+  #printableReceipt {
+    position: absolute;
+    left: 0; top: 0; width: 100%;
+    border: none;
+  }
+}
+
+/* Mobile Bottom Bar for Phones */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 62px;
+  background: #ffffff;
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.07);
+  z-index: 999;
+  justify-content: space-around;
+  align-items: center;
+}
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px;
+  flex: 1;
+}
+.mobile-nav-item.active {
+  color: var(--primary);
+  font-weight: 700;
+}
+.mobile-nav-item span { font-size: 20px; margin-bottom: 2px; }
+
+/* Responsiveness */
+@media (max-width: 900px) {
+  .two-col { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main-content { margin-left: 0; padding: 14px 14px 80px; }
+  .mobile-bottom-nav { display: flex; }
+  .top-header { flex-direction: column; align-items: flex-start; }
+  .header-actions { width: 100%; justify-content: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================= 1. SECURE LOGIN VIEW (FIRST PAGE) ================= -->
+<div id="loginSection">
+  <div class="login-card">
+    <div class="logo-banner">
+      <div style="font-size:38px; margin-bottom:4px;">🤝</div>
+      <h1>Vyapar Sathi AI</h1>
+      <p>Smart Business Command Center for Retail & Kirana</p>
+    </div>
+
+    <form onsubmit="handleLogin(event)">
+      <div class="login-input-group">
+        <label>📱 Phone Number</label>
+        <input id="loginPhone" type="tel" placeholder="Enter any 10-digit phone number" value="9876543210" required>
+      </div>
+
+      <div class="login-input-group">
+        <label>🔒 Password</label>
+        <input id="loginPassword" type="password" placeholder="Enter any password" value="vyapar123" required>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; font-size:12px; color:var(--muted);">
+        <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+          <input type="checkbox" id="rememberMe" checked style="width:auto;"> Remember Me
+        </label>
+        <span>Open Prototype Access</span>
+      </div>
+
+      <button type="submit" class="btn-login">🚀 Login to Command Center</button>
+      <button type="button" class="btn-demo-login" onclick="quickDemoLogin()">⚡ 1-Click Instant Demo Login</button>
+    </form>
+    <div style="text-align:center; margin-top:16px; font-size:12px; color:var(--muted);">
+      Ready for Hackathon Presentation • Python Powered
+    </div>
+  </div>
+</div>
+
+<!-- ================= 2. MAIN APP COMMAND CENTER ================= -->
+<div id="appSection">
+  <div class="app-container">
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar">
+      <div class="brand">
+        <span style="font-size:22px;">🤝</span>
+        <div>
+          <h2>Vyapar Sathi AI</h2>
+          <div style="font-size:11px; opacity:0.75;">Kirana ERP & AI Advisor</div>
+        </div>
+      </div>
+      
+      <button class="nav-btn active" onclick="switchTab('dashboard', this)">⚡ Command Center</button>
+      <button class="nav-btn" onclick="switchTab('pos', this)">🧾 Smart Billing / POS</button>
+      <button class="nav-btn" onclick="switchTab('inventory', this)">📦 Inventory & Stock</button>
+      <button class="nav-btn" onclick="switchTab('khata', this)">👥 Udhaar / Khata Book</button>
+      <button class="nav-btn" onclick="switchTab('analytics', this)">📈 Market & Analytics</button>
+      
+      <div class="sidebar-footer">
+        <div id="liveClock" style="margin-bottom:6px; opacity:0.8;"></div>
+        <button class="btn btn-primary btn-sm" style="width:100%; justify-content:center; margin-bottom:6px;" onclick="openShareModal()">📱 Open on Phone / QR</button>
+        <button class="btn btn-secondary btn-sm" style="width:100%; justify-content:center; margin-bottom:6px;" onclick="openZReportModal()">📋 Day-End Z-Report</button>
+        <button class="btn btn-outline-danger btn-sm" style="width:100%; justify-content:center;" onclick="handleLogout()">🚪 Logout</button>
+      </div>
+    </aside>
+
+    <!-- MAIN VIEWPORT -->
+    <main class="main-content">
+      <!-- Top Header & Connection Strip -->
+      <header class="top-header">
+        <div class="title-area">
+          <div id="greetingHeader" class="greeting-text">🌅 Good Morning, Shop Owner</div>
+          <h1 id="pageHeading">Executive Command Center</h1>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn btn-sm btn-primary" onclick="openShareModal()">📱 Phone Access (QR)</button>
+          <span id="connBadge" class="badge badge-live">🟢 Python Server Active</span>
+          <span id="healthBadge" class="badge badge-health">🩺 Health: Calculating...</span>
+          <select id="appLanguage" onchange="changeLanguage()" style="width:auto; padding:5px 9px;">
+            <option value="en">English (EN)</option>
+            <option value="hi">हिंदी (Hindi)</option>
+            <option value="mr">मराठी (Marathi)</option>
+          </select>
+          <button class="btn btn-sm btn-secondary" onclick="refreshData()">🔄 Refresh</button>
+          <button class="btn btn-sm btn-outline-danger" onclick="handleLogout()">🚪 Logout</button>
+        </div>
+      </header>
+
+      <!-- STICKY KPI RIBBON (Compact, All-in-One overview) -->
+      <section class="kpi-grid">
+        <div class="kpi-card blue">
+          <div class="kpi-label">Today's Sales</div>
+          <div class="kpi-val" id="kpiTodaySales">₹0</div>
+          <div class="kpi-sub" id="kpiSalesCount">0 transactions recorded</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-label">Net Profit (Est.)</div>
+          <div class="kpi-val" id="kpiNetProfit">₹0</div>
+          <div class="kpi-sub">Total sales minus expenses</div>
+        </div>
+        <div class="kpi-card amber">
+          <div class="kpi-label">Inventory Worth</div>
+          <div class="kpi-val" id="kpiStockVal">₹0</div>
+          <div class="kpi-sub" id="kpiLowStockWarning">0 low stock alerts</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-label">Pending Udhaar</div>
+          <div class="kpi-val" id="kpiUdhaar">₹0</div>
+          <div class="kpi-sub" id="kpiUdhaarCount">0 customers owing</div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 1: COMMAND CENTER ================= -->
+      <div id="tab-dashboard" class="tab-pane active">
+        <div class="two-col">
+          <!-- Quick POS Box with SEARCHABLE / TYPABLE PRODUCT INPUT -->
+          <div class="card">
+            <div class="card-header">
+              <h3>⚡ Quick Sale / POS Checkout</h3>
+              <span class="tag tag-green">Stock Sync Active</span>
+            </div>
+            <p style="font-size:12.5px; color:var(--muted); margin-bottom:12px;">
+              Type product name or select. Stock is automatically decremented in the database!
+            </p>
+            
+            <div class="form-grid">
+              <div class="form-group" style="grid-column: span 2;">
+                <label>🔍 Select or Type Product Name</label>
+                <!-- SEARCHABLE / TYPABLE INPUT WITH DATALIST -->
+                <input list="quickProductDatalist" id="quickProductInput" placeholder="Start typing e.g. Rice, Oil..." oninput="onQuickProductTyped(this.value)">
+                <datalist id="quickProductDatalist"></datalist>
+                <div id="quickStockNotice" style="font-size:11px; color:var(--primary); margin-top:3px;"></div>
+              </div>
+              <div class="form-group">
+                <label>Qty</label>
+                <input id="quickQty" type="number" min="1" value="1">
+              </div>
+              <div class="form-group">
+                <label>Selling Price (₹)</label>
+                <input id="quickPrice" type="number" min="0">
+              </div>
+              <div class="form-group">
+                <label>Payment</label>
+                <select id="quickMode">
+                  <option value="Cash">Cash</option>
+                  <option value="UPI">UPI / QR</option>
+                  <option value="Udhaar">Udhaar (Credit)</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-top:14px; display:flex; gap:10px;">
+              <button class="btn btn-success" style="flex:1;" onclick="executeQuickSale()">⚡ Complete Quick Sale</button>
+              <button class="btn btn-secondary" onclick="openExpenseModal()">➕ Add Expense</button>
+            </div>
+          </div>
+
+          <!-- AI Vyapar Advisor Box with ROBUST VOICE SPEECH (STT & TTS) -->
+          <div class="card ai-box">
+            <div class="card-header" style="border-bottom-color:#ddd6fe;">
+              <h3>🤖 AI Vyapar Advisor</h3>
+              <button id="micBtn" class="btn btn-sm btn-secondary" onclick="toggleVoiceSpeechInput()">🎙️ Speak</button>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <input id="aiQuestion" placeholder="Ask: 'How is my profit?' or 'Restock suggestions'..." onkeydown="if(event.key==='Enter')askAI()">
+              <button class="btn" onclick="askAI()">Ask AI</button>
+            </div>
+            
+            <div id="speechStatusIndicator" style="display:none; font-size:12px; font-weight:600; color:#dc2626; margin-top:6px;">
+              🔴 Listening... Speak clearly now into microphone!
+            </div>
+
+            <div id="aiResponseArea" class="ai-response" style="display:none;"></div>
+            
+            <!-- Robust Voice Controls -->
+            <div id="aiVoiceControls" style="display:none; margin-top:10px; gap:8px; align-items:center; flex-wrap:wrap;">
+              <button class="btn btn-sm btn-primary" onclick="speakAIAnswer()">🔊 Speak Advice</button>
+              <button class="btn btn-sm btn-secondary" onclick="pauseSpeech()">⏸ Pause</button>
+              <button class="btn btn-sm btn-secondary" onclick="resumeSpeech()">▶ Resume</button>
+              <button class="btn btn-sm btn-outline-danger" onclick="stopSpeech()">⏹ Stop</button>
+              <span id="ttsStatus" style="font-size:11.5px; color:var(--muted); margin-left:6px;"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Recent Ledger -->
+        <div class="card">
+          <div class="card-header">
+            <h3>📋 Recent Sales & Expenses</h3>
+            <span style="font-size:12px; color:var(--muted);">Latest transactions</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Description</th>
+                  <th>Payment Mode</th>
+                  <th>Amount</th>
+                  <th>Profit / Impact</th>
+                </tr>
+              </thead>
+              <tbody id="quickTransactionsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TAB 2: SMART BILLING & POS (WITH LOGO & CUSTOM TEXT) ================= -->
+      <div id="tab-pos" class="tab-pane">
+        <div class="two-col">
+          <!-- Invoice Generator Form -->
+          <div class="card">
+            <div class="card-header">
+              <h3>🧾 New Invoice / Receipt</h3>
+              <button class="btn btn-sm btn-secondary" onclick="resetInvoice()">Clear Invoice</button>
+            </div>
+
+            <!-- Shop Logo Upload Section -->
+            <div style="background:#f1f5f9; padding:10px 14px; border-radius:8px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+              <div>
+                <label style="font-size:12px; font-weight:700; color:var(--dark);">🖼️ Shop Brand Logo (For Invoices)</label>
+                <div style="font-size:11px; color:var(--muted);">Upload store logo to appear on printed bills and soft copies</div>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <input type="file" id="shopLogoFileInput" accept="image/*" onchange="handleLogoUpload(event)" style="display:none;">
+                <button class="btn btn-sm btn-secondary" onclick="document.getElementById('shopLogoFileInput').click()">📁 Choose Logo</button>
+                <button class="btn btn-sm btn-outline-danger" id="removeLogoBtn" onclick="removeShopLogo()" style="display:none;">✕ Remove</button>
+              </div>
+            </div>
+
+            <div class="row" style="margin-bottom:12px;">
+              <div class="form-group">
+                <label>Customer Name</label>
+                <input id="billCustomer" value="Walk-in Customer" placeholder="Customer Name" oninput="renderInvoicePreview()">
+              </div>
+              <div class="form-group">
+                <label>Phone (Optional)</label>
+                <input id="billPhone" placeholder="Mobile number" oninput="renderInvoicePreview()">
+              </div>
+            </div>
+
+            <!-- SMART BILLING: TYPABLE CUSTOM ITEM OR INVENTORY ITEM -->
+            <div style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid var(--border); margin-bottom:14px;">
+              <label style="font-weight:700; color:var(--dark);">➕ Add Item (Type ANY Custom Text or Choose from Stock)</label>
+              <div class="form-grid">
+                <div class="form-group" style="grid-column: span 2;">
+                  <label>Item Name (Type freely e.g. Loose Dal, Eggs, Sugar)</label>
+                  <input list="invoiceProductDatalist" id="invoiceItemInput" placeholder="Type ANY product name here..." oninput="onInvoiceProductTyped(this.value)">
+                  <datalist id="invoiceProductDatalist"></datalist>
+                </div>
+                <div class="form-group">
+                  <label>Quantity</label>
+                  <input id="invoiceItemQty" type="number" min="1" value="1">
+                </div>
+                <div class="form-group">
+                  <label>Unit Rate (₹)</label>
+                  <input id="invoiceItemPrice" type="number" min="0" placeholder="50">
+                </div>
+                <button class="btn btn-sm" onclick="addInvoiceItem()" style="height:38px;">➕ Add to Bill</button>
+              </div>
+              <div style="font-size:11px; color:var(--muted); margin-top:4px;">
+                💡 Tip: You can type custom items that aren't in your catalog, and they will still be added to the bill!
+              </div>
+            </div>
+
+            <!-- Taxes, Discounts, Payment Mode -->
+            <div class="row">
+              <div class="form-group">
+                <label>GST / Tax Rate</label>
+                <select id="invoiceGst" onchange="renderInvoicePreview()">
+                  <option value="0">0% (Exempted / Kirana)</option>
+                  <option value="5">5% GST</option>
+                  <option value="12">12% GST</option>
+                  <option value="18">18% GST</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Discount (₹)</label>
+                <input id="invoiceDiscount" type="number" min="0" value="0" oninput="renderInvoicePreview()">
+              </div>
+              <div class="form-group">
+                <label>Payment Method</label>
+                <select id="invoicePayMode" onchange="renderInvoicePreview()">
+                  <option value="Cash">Cash</option>
+                  <option value="UPI">UPI / Online QR</option>
+                  <option value="Udhaar">Udhaar (Add to Khata)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-top:16px; display:flex; gap:10px;">
+              <button class="btn btn-success" style="flex:1;" onclick="finalizeAndPrintInvoice()">🖨️ Checkout, Save & Print</button>
+              <button class="btn btn-secondary" onclick="downloadInvoiceHTML()">💾 Soft Copy (.html)</button>
+            </div>
+
+            <!-- OCR Bill Scanner -->
+            <div style="margin-top:20px; padding-top:14px; border-top:1px solid var(--border);">
+              <div style="font-size:13px; font-weight:700; margin-bottom:6px;">📸 Smart Bill Scanner (Receipt OCR)</div>
+              <p style="font-size:12px; color:var(--muted); margin-bottom:8px;">Scan paper supplier receipts or bills via camera or photo.</p>
+              <input id="ocrInputFile" type="file" accept="image/*" capture="environment" style="margin-bottom:8px;">
+              <button class="btn btn-sm btn-secondary" onclick="scanBillWithOCR()">🔍 Scan Bill Image</button>
+              <span id="ocrScanStatus" style="font-size:12px; color:var(--primary); margin-left:8px;"></span>
+              <textarea id="ocrOutputBox" style="margin-top:8px; font-size:12px;" placeholder="Extracted text from invoice image will appear here..."></textarea>
+            </div>
+          </div>
+
+          <!-- Printable Thermal / A4 Preview Box (WITH LOGO & DYNAMIC UPI QR) -->
+          <div class="card">
+            <div class="card-header">
+              <h3>👁️ Live Receipt Preview</h3>
+              <span id="receiptDateBadge" style="font-size:12px; color:var(--muted);"></span>
+            </div>
+            
+            <div id="printableReceipt">
+              <!-- DYNAMIC LOGO PREVIEW -->
+              <div class="receipt-logo-container" id="receiptLogoWrapper" style="display:none;">
+                <img id="receiptLogoImg" class="receipt-logo-img" alt="Shop Logo">
+              </div>
+
+              <div style="text-align:center; margin-bottom:12px;">
+                <h2 id="receiptShopName" style="font-size:18px;">VYAPAR SATHI STORE</h2>
+                <div style="font-size:11px; color:#555;">Smart Kirana & Retail Automation</div>
+                <div style="font-size:11px;" id="receiptHeaderDate"></div>
+                <div style="border-bottom:1px dashed #444; margin:8px 0;"></div>
+              </div>
+              
+              <div style="font-size:12px; margin-bottom:8px;" id="receiptCustomerInfo">Customer: Walk-in Customer</div>
+              
+              <table style="width:100%; font-size:12px; margin-bottom:10px;">
+                <thead>
+                  <tr style="border-bottom:1px solid #ddd;">
+                    <th style="text-align:left; background:transparent;">Item</th>
+                    <th style="text-align:center; background:transparent;">Qty</th>
+                    <th style="text-align:right; background:transparent;">Rate</th>
+                    <th style="text-align:right; background:transparent;">Total</th>
+                  </tr>
+                </thead>
+                <tbody id="receiptItemsBody">
+                  <tr><td colspan="4" style="text-align:center; color:#999; padding:15px;">No items in cart</td></tr>
+                </tbody>
+              </table>
+
+              <div style="border-top:1px dashed #444; padding-top:8px; font-size:12.5px;">
+                <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span><span id="receiptSubtotal">₹0.00</span></div>
+                <div style="display:flex; justify-content:space-between;"><span>Tax / GST:</span><span id="receiptTax">₹0.00</span></div>
+                <div style="display:flex; justify-content:space-between;"><span>Discount:</span><span id="receiptDiscount">₹0.00</span></div>
+                <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:15px; margin-top:6px; border-top:1px solid #ddd; padding-top:4px;">
+                  <span>GRAND TOTAL:</span><span id="receiptGrandTotal">₹0.00</span>
+                </div>
+              </div>
+
+              <!-- DYNAMIC BHARAT UPI PAYMENT QR CODE -->
+              <div class="upi-qr-box" id="receiptQrBox">
+                <div style="font-size:10px; font-weight:700; color:#555; text-transform:uppercase;">Scan to Pay via UPI</div>
+                <img id="receiptQrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=upi://pay?pa=shop@upi&pn=VyaparSathi&am=0" alt="UPI QR">
+                <div style="font-size:9.5px; color:#777;">GPay • PhonePe • Paytm • BHIM</div>
+              </div>
+
+              <div style="text-align:center; margin-top:14px; font-size:11px; color:#666;">
+                <div>Thank You! Visit Again 🙏</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TAB 3: INVENTORY & STOCK ================= -->
+      <div id="tab-inventory" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <h3>📦 Stock Master & Real-Time Alerts</h3>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <input id="inventorySearch" placeholder="🔍 Search product..." oninput="filterInventory()" style="width:180px; padding:6px 10px;">
+              <button class="btn btn-sm btn-secondary" onclick="toggleLowStockOnly()">⚠️ Low Stock Only</button>
+              <button class="btn btn-sm btn-secondary" onclick="sendWholesalerOrderWhatsApp()">📲 Supplier Order</button>
+              <button class="btn btn-sm" onclick="openAddProductModal()">➕ Add Product</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>In Stock</th>
+                  <th>Cost Price</th>
+                  <th>Selling Price</th>
+                  <th>Margin (%)</th>
+                  <th>Stock Valuation</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryMasterTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Dead Stock Section -->
+        <div class="card" style="border-left:4px solid var(--amber);">
+          <div class="card-header">
+            <h3>📉 Dead Stock & Slow-Mover Intelligence</h3>
+            <button class="btn btn-sm btn-secondary" onclick="refreshDeadStock()">Analyze Slow Stock</button>
+          </div>
+          <p style="font-size:12.5px; color:var(--muted); margin-bottom:10px;">Identifies inventory sitting idle with less than 2 sales recorded in history.</p>
+          <div id="deadStockAlertArea" style="font-size:13px; line-height:1.7;"></div>
+        </div>
+      </div>
+
+      <!-- ================= TAB 4: KHATA / UDHAAR BOOK ================= -->
+      <div id="tab-khata" class="tab-pane">
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <h3>👥 Record Customer Udhaar (Credit)</h3>
+            </div>
+            <div class="form-group">
+              <label>Customer Name</label>
+              <input id="khataName" placeholder="e.g. Ramesh Kumar">
+            </div>
+            <div class="row">
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input id="khataPhone" placeholder="10-digit mobile number">
+              </div>
+              <div class="form-group">
+                <label>Amount Owed (₹)</label>
+                <input id="khataAmount" type="number" min="1" placeholder="500">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Payment Due Date</label>
+              <input id="khataDueDate" type="date">
+            </div>
+            <button class="btn btn-success" style="width:100%; margin-top:8px;" onclick="addCreditEntry()">➕ Record to Khata</button>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>💬 1-Click WhatsApp Reminder Template</h3>
+            </div>
+            <p style="font-size:12.5px; color:var(--muted); margin-bottom:8px;">Custom reminder message that opens directly into customer's WhatsApp chat with exact balance.</p>
+            <textarea id="whatsappTemplate" style="height:100px;">Namaste {NAME}, this is a gentle reminder regarding your pending balance of ₹{AMOUNT} at our shop. Please settle at your convenience. Thank you!</textarea>
+            <div style="font-size:11.5px; color:var(--muted);">Placeholders: <code>{NAME}</code> and <code>{AMOUNT}</code> are auto-filled!</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>📖 Customer Khata Ledger</h3>
+            <span style="font-size:12px; color:var(--muted);">Tracks all credit balances</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Phone</th>
+                  <th>Amount Due</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="khataTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TAB 5: MARKET & ANALYTICS (WITH GOOGLE SEARCH) ================= -->
+      <div id="tab-analytics" class="tab-pane">
+        <div class="two-col">
+          <!-- 7-Day Trend Chart -->
+          <div class="card">
+            <div class="card-header">
+              <h3>📈 7-Day Sales Trend</h3>
+            </div>
+            <div id="salesChartContainer" style="padding:10px 0;"></div>
+          </div>
+
+          <!-- Competitor Comparison with GOOGLE SEARCH & ONLINE BENCHMARKS -->
+          <div class="card">
+            <div class="card-header">
+              <h3>🏪 Competitor Price & Google Live Search</h3>
+            </div>
+            
+            <div class="form-grid" style="margin-bottom:12px;">
+              <div class="form-group">
+                <label>Select Product</label>
+                <select id="compProductSelect" onchange="fetchMarketBenchmark(this.value)"></select>
+              </div>
+              <div class="form-group">
+                <label>Competitor Shop Name</label>
+                <input id="compShopName" placeholder="e.g. Nearby Kirana, DMart">
+              </div>
+              <div class="form-group">
+                <label>Their Price (₹)</label>
+                <input id="compShopPrice" type="number" min="0">
+              </div>
+              <button class="btn btn-sm" onclick="addCompetitorEntry()" style="height:38px;">Compare</button>
+            </div>
+
+            <!-- LIVE GOOGLE SEARCH & MARKET BENCHMARK CARD -->
+            <div id="googleMarketBenchmarkBox" style="background:#f1f5f9; border-radius:8px; padding:12px; margin-bottom:14px; font-size:12.5px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <b>🌐 Google Market Benchmark:</b>
+                <button class="btn btn-sm btn-secondary" onclick="openGooglePriceSearch()">🔍 Check Live on Google</button>
+              </div>
+              <div id="benchmarkDetails" style="margin-top:6px; color:#475569;">
+                Select a product to view estimated online prices across Blinkit, Zepto, and JioMart.
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Competitor</th>
+                    <th>Their Price</th>
+                    <th>Our Price</th>
+                    <th>Difference</th>
+                  </tr>
+                </thead>
+                <tbody id="competitorTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Festival Planner & Break-Even Simulator -->
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <h3>🎉 Seasonal & Festival Demand Planner</h3>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Festival / Season</label>
+                <select id="festSelect">
+                  <option value="Diwali">Diwali</option>
+                  <option value="Holi">Holi</option>
+                  <option value="Eid">Eid</option>
+                  <option value="Ganesh Chaturthi">Ganesh Chaturthi</option>
+                  <option value="Christmas">Christmas</option>
+                  <option value="Weekend Rush">Weekend Rush</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Stock Budget (₹)</label>
+                <input id="festBudget" type="number" value="10000">
+              </div>
+              <div class="form-group">
+                <label>Expected Footfall</label>
+                <input id="festFootfall" type="number" value="150">
+              </div>
+            </div>
+            <button class="btn btn-sm btn-secondary" style="margin-top:10px;" onclick="generateFestivalForecast()">Generate Seasonal Checklist</button>
+            <div id="festResultBox" style="margin-top:10px; font-size:12.5px; line-height:1.6; background:#f8fafc; padding:12px; border-radius:8px; display:none;"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>🧮 Break-even & Margin Calculator</h3>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Monthly Fixed Cost (Rent+Staff)</label>
+                <input id="beFixed" type="number" value="15000">
+              </div>
+              <div class="form-group">
+                <label>Avg Selling Price / Item</label>
+                <input id="beSell" type="number" value="120">
+              </div>
+              <div class="form-group">
+                <label>Avg Cost / Item</label>
+                <input id="beCost" type="number" value="85">
+              </div>
+            </div>
+            <button class="btn btn-sm btn-secondary" style="margin-top:10px;" onclick="calculateBreakEven()">Compute Break-Even</button>
+            <div id="beResultBox" style="margin-top:10px; font-size:13px; font-weight:600; color:var(--primary); display:none;"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- MOBILE BOTTOM NAVIGATION (Active on Phones & Tablets) -->
+    <nav class="mobile-bottom-nav">
+      <button class="mobile-nav-item active" onclick="switchTab('dashboard', this)"><span>⚡</span>Home</button>
+      <button class="mobile-nav-item" onclick="switchTab('pos', this)"><span>🧾</span>POS</button>
+      <button class="mobile-nav-item" onclick="switchTab('inventory', this)"><span>📦</span>Stock</button>
+      <button class="mobile-nav-item" onclick="switchTab('khata', this)"><span>👥</span>Khata</button>
+      <button class="mobile-nav-item" onclick="switchTab('analytics', this)"><span>📈</span>Market</button>
+    </nav>
+  </div>
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- 1. ADD / EDIT PRODUCT MODAL -->
+<div id="modalProduct" class="modal-overlay">
+  <div class="modal-content">
+    <div class="card-header">
+      <h3 id="modalProductTitle">➕ Add New Product</h3>
+      <button class="btn btn-sm btn-secondary" onclick="closeModal('modalProduct')">✕</button>
+    </div>
+    <input type="hidden" id="editProductId">
+    <div class="form-group">
+      <label>Product Name</label>
+      <input id="mProdName" placeholder="e.g. Basmati Rice 1kg">
+    </div>
+    <div class="row">
+      <div class="form-group">
+        <label>Initial Stock Qty</label>
+        <input id="mProdQty" type="number" min="0" value="10">
+      </div>
+      <div class="form-group">
+        <label>Cost Price (₹)</label>
+        <input id="mProdCost" type="number" min="0" value="40">
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group">
+        <label>Selling Price (₹)</label>
+        <input id="mProdPrice" type="number" min="0" value="50">
+      </div>
+      <div class="form-group">
+        <label>Low Stock Alert Limit</label>
+        <input id="mProdLimit" type="number" min="1" value="5">
+      </div>
+    </div>
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px;">
+      <button class="btn btn-secondary" onclick="closeModal('modalProduct')">Cancel</button>
+      <button class="btn btn-success" onclick="saveProductModal()">Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- 2. ADD EXPENSE MODAL -->
+<div id="modalExpense" class="modal-overlay">
+  <div class="modal-content">
+    <div class="card-header">
+      <h3>💸 Record Business Expense</h3>
+      <button class="btn btn-sm btn-secondary" onclick="closeModal('modalExpense')">✕</button>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <input id="mExpenseName" placeholder="e.g. Electricity, Transport, Packaging bags">
+    </div>
+    <div class="row">
+      <div class="form-group">
+        <label>Amount (₹)</label>
+        <input id="mExpenseAmount" type="number" min="1" placeholder="250">
+      </div>
+      <div class="form-group">
+        <label>Paid via</label>
+        <select id="mExpenseMode">
+          <option value="Cash">Cash Drawer</option>
+          <option value="UPI">UPI / Bank</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px;">
+      <button class="btn btn-secondary" onclick="closeModal('modalExpense')">Cancel</button>
+      <button class="btn btn-danger" onclick="saveExpenseModal()">Save Expense</button>
+    </div>
+  </div>
+</div>
+
+<!-- 3. DAY-END Z-REPORT MODAL -->
+<div id="modalZReport" class="modal-overlay">
+  <div class="modal-content">
+    <div class="card-header">
+      <h3>📋 Day-End Z-Report Closure</h3>
+      <button class="btn btn-sm btn-secondary" onclick="closeModal('modalZReport')">✕</button>
+    </div>
+    <div id="zReportBody" style="font-size:13px; line-height:1.7;">
+      Loading closure report...
+    </div>
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px;">
+      <button class="btn btn-secondary" onclick="closeModal('modalZReport')">Close</button>
+      <button class="btn btn-success" onclick="window.print()">🖨️ Print Summary</button>
+    </div>
+  </div>
+</div>
+
+<!-- 4. SHARE / CONNECT PHONE OR LAPTOP MODAL -->
+<div id="modalShare" class="modal-overlay">
+  <div class="modal-content" style="text-align:center;">
+    <div class="card-header">
+      <h3>📱 Connect on Any Phone or Laptop</h3>
+      <button class="btn btn-sm btn-secondary" onclick="closeModal('modalShare')">✕</button>
+    </div>
+    
+    <div style="font-size:13px; color:var(--muted); margin-bottom:12px;">
+      Point your smartphone camera (iPhone / Android) at this QR code to open the prototype immediately!
+    </div>
+
+    <!-- Live QR Code -->
+    <div style="background:#f8fafc; padding:15px; border-radius:12px; display:inline-block; border:1px solid var(--border); margin-bottom:14px;">
+      <img id="shareQrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://ac81b9e65c37cb.lhr.life" alt="Mobile QR Code" style="width:180px; height:180px; display:block;">
+    </div>
+
+    <div style="text-align:left; background:#eef2ff; border:1px solid #c7d2fe; padding:12px; border-radius:8px; margin-bottom:12px; font-size:12.5px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <b>🌐 Worldwide Public Link (Any Phone / Anywhere):</b>
+        <button class="btn btn-sm btn-secondary" onclick="copyShareLink('https://ac81b9e65c37cb.lhr.life')">📋 Copy</button>
+      </div>
+      <code id="sharePublicLink" style="font-weight:700; color:var(--primary); word-break:break-all;">https://ac81b9e65c37cb.lhr.life</code>
+      <div style="font-size:11px; color:#475569; margin-top:4px;">Works on mobile data (4G/5G) across any phone or laptop worldwide!</div>
+    </div>
+
+    <div style="text-align:left; background:#f8fafc; border:1px solid var(--border); padding:12px; border-radius:8px; margin-bottom:14px; font-size:12.5px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <b>📶 Local Wi-Fi / Hotspot Link:</b>
+        <button class="btn btn-sm btn-secondary" onclick="copyShareLink('http://10.183.75.253:5000')">📋 Copy</button>
+      </div>
+      <code style="font-weight:700; color:#334155;">http://10.183.75.253:5000</code>
+      <div style="font-size:11px; color:#64748b; margin-top:4px;">For devices connected to the same Wi-Fi router or phone hotspot.</div>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; gap:8px;">
+      <button class="btn btn-secondary" onclick="closeModal('modalShare')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tesseract OCR Library -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+<script>
+// ================= STATE & CONFIGURATION =================
+const API_BASE = window.location.origin.includes('5000') || window.location.origin.includes('3000') 
+  ? '' 
+  : 'http://localhost:5000';
+
+let state = {
+  isLoggedIn: false,
+  products: [],
+  transactions: [],
+  credits: [],
+  competitors: [],
+  invoiceItems: [],
+  lowStockOnly: false,
+  selectedQuickProduct: null,
+  currentGoogleSearchUrl: 'https://www.google.com/search?q=grocery+prices+india',
+  speechRecognition: null,
+  isListening: false
+};
+
+const formatINR = n => "₹" + Number(n || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 });
+const getTodayKey = () => new Date().toISOString().slice(0, 10);
+
+// ================= AUTHENTICATION & LOGIN/LOGOUT =================
+function checkAuth() {
+  const session = localStorage.getItem('vsa_session');
+  if (session) {
+    state.isLoggedIn = true;
+    showAppView();
+  } else {
+    state.isLoggedIn = false;
+    showLoginView();
+  }
+}
+
+function handleLogin(e) {
+  if (e) e.preventDefault();
+  const phone = document.getElementById('loginPhone').value.trim();
+  const pass = document.getElementById('loginPassword').value.trim();
+
+  if (!phone || !pass) {
+    alert("Please enter phone number and password.");
+    return;
+  }
+
+  // Open access prototype: Accept any phone & password
+  localStorage.setItem('vsa_session', JSON.stringify({ phone, loginAt: new Date().toISOString() }));
+  state.isLoggedIn = true;
+  showAppView();
+}
+
+function quickDemoLogin() {
+  document.getElementById('loginPhone').value = "9876543210";
+  document.getElementById('loginPassword').value = "hackathon2026";
+  handleLogin();
+}
+
+function handleLogout() {
+  if (confirm("Are you sure you want to log out?")) {
+    localStorage.removeItem('vsa_session');
+    state.isLoggedIn = false;
+    stopSpeech();
+    showLoginView();
+  }
+}
+
+function showLoginView() {
+  document.getElementById('loginSection').style.display = 'flex';
+  document.getElementById('appSection').style.display = 'none';
+}
+
+function showAppView() {
+  document.getElementById('loginSection').style.display = 'none';
+  document.getElementById('appSection').style.display = 'block';
+  updateTimeGreeting();
+  loadSavedShopLogo();
+  refreshData();
+}
+
+// ================= DYNAMIC GREETING ACCORDING TO TIME =================
+function updateTimeGreeting() {
+  const hour = new Date().getHours();
+  let greeting = "";
+  if (hour >= 4 && hour < 12) {
+    greeting = "🌅 Good Morning, Shop Owner";
+  } else if (hour >= 12 && hour < 17) {
+    greeting = "☀️ Good Afternoon, Shop Owner";
+  } else if (hour >= 17 && hour < 22) {
+    greeting = "🌆 Good Evening, Shop Owner";
+  } else {
+    greeting = "🌙 Working Late? Good Night, Shop Owner";
+  }
+  document.getElementById('greetingHeader').textContent = greeting;
+}
+
+// ================= SHOP LOGO MANAGEMENT =================
+function handleLogoUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    localStorage.setItem('vsa_shop_logo', dataUrl);
+    applyShopLogo(dataUrl);
+  };
+  reader.readAsDataURL(file);
+}
+
+function loadSavedShopLogo() {
+  const saved = localStorage.getItem('vsa_shop_logo');
+  if (saved) {
+    applyShopLogo(saved);
+  } else {
+    document.getElementById('receiptLogoWrapper').style.display = 'none';
+    document.getElementById('removeLogoBtn').style.display = 'none';
+  }
+}
+
+function applyShopLogo(dataUrl) {
+  const img = document.getElementById('receiptLogoImg');
+  img.src = dataUrl;
+  document.getElementById('receiptLogoWrapper').style.display = 'block';
+  document.getElementById('removeLogoBtn').style.display = 'inline-flex';
+}
+
+function removeShopLogo() {
+  localStorage.removeItem('vsa_shop_logo');
+  document.getElementById('receiptLogoWrapper').style.display = 'none';
+  document.getElementById('removeLogoBtn').style.display = 'none';
+}
+
+// ================= INITIALIZATION & DATA LAYER =================
+window.addEventListener('DOMContentLoaded', () => {
+  updateClock();
+  setInterval(updateClock, 1000);
+  setInterval(updateTimeGreeting, 60000);
+
+  document.getElementById('receiptDateBadge').textContent = new Date().toLocaleDateString('en-IN');
+  document.getElementById('receiptHeaderDate').textContent = "Date: " + new Date().toLocaleString('en-IN');
+  
+  initVoiceSystem();
+  checkAuth();
+});
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById('liveClock').textContent = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' | ' + now.toLocaleDateString('en-IN');
+}
+
+async function refreshData() {
+  try {
+    // 1. Fetch Stats & Health
+    const statsRes = await fetch(`${API_BASE}/api/stats`).catch(() => null);
+    if (statsRes && statsRes.ok) {
+      const stats = await statsRes.json();
+      document.getElementById('kpiTodaySales').textContent = formatINR(stats.todaySales);
+      document.getElementById('kpiNetProfit').textContent = formatINR(stats.netProfit);
+      document.getElementById('kpiStockVal').textContent = formatINR(stats.inventoryValue);
+      document.getElementById('kpiLowStockWarning').textContent = `${stats.lowStockCount} items need restock`;
+      document.getElementById('kpiUdhaar').textContent = formatINR(stats.pendingUdhaar);
+      document.getElementById('kpiUdhaarCount').textContent = `${stats.pendingUdhaarCount} customers pending`;
+
+      const health = document.getElementById('healthBadge');
+      health.textContent = `🩺 Health: ${stats.healthScore}/100 (${stats.healthStatus})`;
+      health.style.background = stats.healthScore > 75 ? "#dcfce7" : (stats.healthScore > 50 ? "#e0e7ff" : "#fee2e2");
+      health.style.color = stats.healthScore > 75 ? "#166534" : (stats.healthScore > 50 ? "#3730a3" : "#b91c1c");
+    }
+
+    // 2. Fetch Products
+    const prodRes = await fetch(`${API_BASE}/api/products`).catch(() => null);
+    if (prodRes && prodRes.ok) {
+      state.products = await prodRes.json();
+    } else if (!state.products.length) {
+      state.products = JSON.parse(localStorage.getItem('vsa_prods') || '[]');
+    }
+
+    // 3. Fetch Transactions
+    const txRes = await fetch(`${API_BASE}/api/transactions`).catch(() => null);
+    if (txRes && txRes.ok) {
+      state.transactions = await txRes.json();
+    } else if (!state.transactions.length) {
+      state.transactions = JSON.parse(localStorage.getItem('vsa_tx') || '[]');
+    }
+
+    // 4. Fetch Credits
+    const crRes = await fetch(`${API_BASE}/api/credits`).catch(() => null);
+    if (crRes && crRes.ok) {
+      state.credits = await crRes.json();
+    } else if (!state.credits.length) {
+      state.credits = JSON.parse(localStorage.getItem('vsa_cr') || '[]');
+    }
+
+    // 5. Fetch Competitors
+    const compRes = await fetch(`${API_BASE}/api/competitors`).catch(() => null);
+    if (compRes && compRes.ok) {
+      state.competitors = await compRes.json();
+    }
+  } catch (err) {
+    console.warn("Using offline storage fallback", err);
+  }
+
+  renderAllUI();
+}
+
+function renderAllUI() {
+  populateProductDatalists();
+  renderInventoryTable();
+  renderRecentTransactions();
+  renderKhataTable();
+  renderCompetitorTable();
+  renderSalesChart();
+  refreshDeadStock();
+}
+
+// ================= SEARCHABLE / TYPABLE PRODUCT INPUTS =================
+function populateProductDatalists() {
+  const quickDatalist = document.getElementById('quickProductDatalist');
+  const invoiceDatalist = document.getElementById('invoiceProductDatalist');
+  const compSelect = document.getElementById('compProductSelect');
+
+  const optionsHtml = state.products.map(p => 
+    `<option value="${p.name}">Stock: ${p.qty} | Price: ${formatINR(p.price)}</option>`
+  ).join('');
+
+  if (quickDatalist) quickDatalist.innerHTML = optionsHtml;
+  if (invoiceDatalist) invoiceDatalist.innerHTML = optionsHtml;
+
+  if (compSelect) {
+    compSelect.innerHTML = state.products.map(p => 
+      `<option value="${p.id}">${p.name} (Our Price: ${formatINR(p.price)})</option>`
+    ).join('');
+    if (state.products.length) {
+      fetchMarketBenchmark(state.products[0].id);
+    }
+  }
+}
+
+// Triggered when user types in Quick POS product box
+function onQuickProductTyped(typedVal) {
+  const val = typedVal.trim().toLowerCase();
+  const notice = document.getElementById('quickStockNotice');
+  const matched = state.products.find(p => p.name.toLowerCase() === val || p.name.toLowerCase().startsWith(val));
+
+  if (matched) {
+    state.selectedQuickProduct = matched;
+    document.getElementById('quickPrice').value = matched.price;
+    notice.innerHTML = `✅ Found: <b>${matched.name}</b> • Available Stock: <b>${matched.qty} units</b>`;
+    notice.style.color = matched.qty <= matched.low_limit ? "var(--red)" : "var(--green)";
+  } else {
+    state.selectedQuickProduct = null;
+    notice.innerHTML = typedVal ? `ℹ️ Custom item entered. (Price will be recorded)` : ``;
+    notice.style.color = "var(--muted)";
+  }
+}
+
+// Triggered when user types in Smart Billing item box
+function onInvoiceProductTyped(typedVal) {
+  const val = typedVal.trim().toLowerCase();
+  const matched = state.products.find(p => p.name.toLowerCase() === val || p.name.toLowerCase().startsWith(val));
+  if (matched) {
+    document.getElementById('invoiceItemPrice').value = matched.price;
+  }
+}
+
+// Quick Sale Execution
+async function executeQuickSale() {
+  const inputName = document.getElementById('quickProductInput').value.trim();
+  const qty = Number(document.getElementById('quickQty').value);
+  const price = Number(document.getElementById('quickPrice').value);
+  const mode = document.getElementById('quickMode').value;
+
+  if (!inputName || qty <= 0 || isNaN(price)) {
+    alert("Please enter a product name and valid quantity & price.");
+    return;
+  }
+
+  const product = state.selectedQuickProduct || state.products.find(p => p.name.toLowerCase() === inputName.toLowerCase());
+  const productId = product ? product.id : 0;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/transactions/sale`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId, qty, paymentMode: mode })
+    });
+    if (res.ok) {
+      alert(`✅ Sale recorded successfully! Amount: ${formatINR(qty * price)}`);
+      document.getElementById('quickProductInput').value = '';
+      document.getElementById('quickStockNotice').innerHTML = '';
+      await refreshData();
+      return;
+    }
+  } catch (e) {}
+
+  // Fallback
+  if (product) product.qty = Math.max(0, product.qty - qty);
+  state.transactions.unshift({
+    id: Date.now(),
+    date: getTodayKey(),
+    type: 'Sale',
+    name: `${inputName} × ${qty}`,
+    amount: price * qty,
+    profit: (price - (product ? product.cost : 0)) * qty,
+    payment_mode: mode
+  });
+  alert(`✅ Sale recorded locally! Amount: ${formatINR(price * qty)}`);
+  document.getElementById('quickProductInput').value = '';
+  document.getElementById('quickStockNotice').innerHTML = '';
+  renderAllUI();
+}
+
+// ================= SMART BILLING & CUSTOM ITEM ENTRY =================
+function addInvoiceItem() {
+  const nameInput = document.getElementById('invoiceItemInput').value.trim();
+  const qty = Number(document.getElementById('invoiceItemQty').value);
+  const price = Number(document.getElementById('invoiceItemPrice').value);
+
+  if (!nameInput || qty <= 0 || isNaN(price) || price < 0) {
+    alert("Please enter a valid item name, quantity, and rate.");
+    return;
+  }
+
+  // Find if it's in stock or custom
+  const matched = state.products.find(p => p.name.toLowerCase() === nameInput.toLowerCase());
+  const productId = matched ? matched.id : null;
+  const cost = matched ? matched.cost : (price * 0.7); // estimate cost if custom
+
+  // Check if already in bill
+  const existing = state.invoiceItems.find(i => i.name.toLowerCase() === nameInput.toLowerCase());
+  if (existing) {
+    existing.qty += qty;
+    existing.price = price;
+  } else {
+    state.invoiceItems.push({ productId, name: nameInput, qty, price, cost });
+  }
+
+  // Clear inputs for next item
+  document.getElementById('invoiceItemInput').value = '';
+  document.getElementById('invoiceItemQty').value = '1';
+  document.getElementById('invoiceItemPrice').value = '';
+
+  renderInvoicePreview();
+}
+
+function renderInvoicePreview() {
+  const body = document.getElementById('receiptItemsBody');
+  const customer = document.getElementById('billCustomer').value || 'Walk-in Customer';
+  document.getElementById('receiptCustomerInfo').textContent = "Customer: " + customer;
+
+  if (!state.invoiceItems.length) {
+    body.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999; padding:15px;">No items in cart</td></tr>`;
+    document.getElementById('receiptSubtotal').textContent = "₹0.00";
+    document.getElementById('receiptTax').textContent = "₹0.00";
+    document.getElementById('receiptDiscount').textContent = "₹0.00";
+    document.getElementById('receiptGrandTotal').textContent = "₹0.00";
+    updateQrCode(0);
+    return;
+  }
+
+  let subtotal = 0;
+  body.innerHTML = state.invoiceItems.map((item, idx) => {
+    const itemTotal = item.qty * item.price;
+    subtotal += itemTotal;
+    return `<tr>
+      <td>${item.name} <button onclick="removeInvoiceItem(${idx})" style="background:none;border:none;color:red;cursor:pointer;font-size:11px;">✕</button></td>
+      <td style="text-align:center;">${item.qty}</td>
+      <td style="text-align:right;">${formatINR(item.price)}</td>
+      <td style="text-align:right; font-weight:600;">${formatINR(itemTotal)}</td>
+    </tr>`;
+  }).join('');
+
+  const gstPercent = Number(document.getElementById('invoiceGst').value || 0);
+  const discount = Number(document.getElementById('invoiceDiscount').value || 0);
+  const taxAmount = (subtotal * gstPercent) / 100;
+  const grandTotal = Math.max(0, subtotal + taxAmount - discount);
+
+  document.getElementById('receiptSubtotal').textContent = formatINR(subtotal);
+  document.getElementById('receiptTax').textContent = formatINR(taxAmount) + (gstPercent ? ` (${gstPercent}%)` : '');
+  document.getElementById('receiptDiscount').textContent = formatINR(discount);
+  document.getElementById('receiptGrandTotal').textContent = formatINR(grandTotal);
+
+  updateQrCode(grandTotal);
+}
+
+function updateQrCode(amount) {
+  const qrImg = document.getElementById('receiptQrImg');
+  const shopName = encodeURIComponent("Vyapar Sathi Store");
+  const upiUrl = `upi://pay?pa=vyaparsathi@upi&pn=${shopName}&am=${amount.toFixed(2)}&cu=INR`;
+  qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(upiUrl)}`;
+}
+
+function removeInvoiceItem(idx) {
+  state.invoiceItems.splice(idx, 1);
+  renderInvoicePreview();
+}
+
+function resetInvoice() {
+  state.invoiceItems = [];
+  document.getElementById('invoiceDiscount').value = "0";
+  document.getElementById('invoiceItemInput').value = "";
+  renderInvoicePreview();
+}
+
+async function finalizeAndPrintInvoice() {
+  if (!state.invoiceItems.length) {
+    alert("Cart is empty. Add at least one item.");
+    return;
+  }
+
+  const customerName = document.getElementById('billCustomer').value.trim() || 'Walk-in Customer';
+  const phone = document.getElementById('billPhone').value.trim();
+  const paymentMode = document.getElementById('invoicePayMode').value;
+  const discount = Number(document.getElementById('invoiceDiscount').value || 0);
+  const taxPercent = Number(document.getElementById('invoiceGst').value || 0);
+
+  const payload = {
+    items: state.invoiceItems,
+    customerName,
+    phone,
+    paymentMode,
+    discount,
+    taxPercent
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/api/pos/checkout`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      const data = await res.json();
+      alert(`🎉 Invoice ${data.invoiceNo} successfully finalized!`);
+      window.print();
+      resetInvoice();
+      await refreshData();
+      return;
+    }
+  } catch (e) {}
+
+  window.print();
+  resetInvoice();
+  renderAllUI();
+}
+
+function downloadInvoiceHTML() {
+  const content = document.getElementById('printableReceipt').innerHTML;
+  const fullHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Bill Receipt</title><style>body{font-family:monospace;padding:20px;max-width:400px;margin:auto;}img{max-width:90px;}</style></head><body>${content}</body></html>`;
+  const blob = new Blob([fullHtml], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `bill-${Date.now()}.html`;
+  a.click();
+}
+
+// ================= ROBUST SPEECH (VOICE INPUT & TTS) =================
+function initVoiceSystem() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SR) {
+    const rec = new SR();
+    rec.continuous = false;
+    rec.interimResults = false;
+
+    rec.onstart = () => {
+      state.isListening = true;
+      document.getElementById('micBtn').classList.add('mic-pulse');
+      document.getElementById('speechStatusIndicator').style.display = 'block';
+      document.getElementById('aiQuestion').placeholder = "🎙️ Listening... Speak your question now!";
+    };
+
+    rec.onresult = (e) => {
+      const transcript = e.results[0][0].transcript;
+      document.getElementById('aiQuestion').value = transcript;
+      stopListeningUI();
+      askAI();
+    };
+
+    rec.onerror = (e) => {
+      stopListeningUI();
+      alert("Microphone notice: Speech was not recognized or permission denied. Please type your question.");
+    };
+
+    rec.onend = () => {
+      stopListeningUI();
+    };
+
+    state.speechRecognition = rec;
+  }
+}
+
+function toggleVoiceSpeechInput() {
+  if (!state.speechRecognition) {
+    alert("Speech recognition is not supported in this browser. Please use Chrome/Edge or type your question.");
+    return;
+  }
+  if (state.isListening) {
+    state.speechRecognition.stop();
+    stopListeningUI();
+  } else {
+    const lang = document.getElementById('appLanguage').value;
+    state.speechRecognition.lang = { en: 'en-IN', hi: 'hi-IN', mr: 'mr-IN' }[lang] || 'en-IN';
+    try {
+      state.speechRecognition.start();
+    } catch (e) {
+      stopListeningUI();
+    }
+  }
+}
+
+function stopListeningUI() {
+  state.isListening = false;
+  document.getElementById('micBtn').classList.remove('mic-pulse');
+  document.getElementById('speechStatusIndicator').style.display = 'none';
+  document.getElementById('aiQuestion').placeholder = "Ask: 'How is my profit?' or 'Restock suggestions'...";
+}
+
+// Robust Text-to-Speech (Speaking AI Answer Aloud)
+function speakAIAnswer() {
+  if (!window.speechSynthesis) {
+    alert("Text-to-speech is not supported in this browser.");
+    return;
+  }
+  const text = document.getElementById('aiResponseArea').textContent.trim();
+  if (!text) return;
+
+  // Clean markdown and symbols so speech engine speaks fluently
+  const cleanText = text.replace(/[*#_`•-]/g, ' ').replace(/\s+/g, ' ');
+
+  window.speechSynthesis.cancel(); // Clear any previous speech
+  const utter = new SpeechSynthesisUtterance(cleanText);
+  utter.rate = 1.0;
+  utter.pitch = 1.0;
+
+  const lang = document.getElementById('appLanguage').value;
+  utter.lang = { en: 'en-IN', hi: 'hi-IN', mr: 'mr-IN' }[lang] || 'en-IN';
+
+  const status = document.getElementById('ttsStatus');
+  utter.onstart = () => { status.textContent = "🔊 Speaking..."; };
+  utter.onend = () => { status.textContent = "✅ Done"; };
+  utter.onerror = () => { status.textContent = ""; };
+
+  window.speechSynthesis.speak(utter);
+}
+
+function pauseSpeech() {
+  if (window.speechSynthesis) window.speechSynthesis.pause();
+  document.getElementById('ttsStatus').textContent = "⏸ Paused";
+}
+
+function resumeSpeech() {
+  if (window.speechSynthesis) window.speechSynthesis.resume();
+  document.getElementById('ttsStatus').textContent = "🔊 Speaking...";
+}
+
+function stopSpeech() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  document.getElementById('ttsStatus').textContent = "";
+}
+
+// AI Advisor Query
+async function askAI() {
+  const q = document.getElementById('aiQuestion').value.trim();
+  const lang = document.getElementById('appLanguage').value;
+  const box = document.getElementById('aiResponseArea');
+  const voiceControls = document.getElementById('aiVoiceControls');
+
+  if (!q) return;
+  box.style.display = 'block';
+  box.textContent = "Analyzing database & market variables...";
+
+  try {
+    const res = await fetch(`${API_BASE}/api/ai/advisor`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: q, language: lang })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      box.textContent = data.answer;
+      voiceControls.style.display = 'flex';
+      return;
+    }
+  } catch (e) {}
+
+  box.textContent = `💡 Vyapar Advisor: You have ${state.products.length} active products. Keep fast movers in stock and follow up on pending udhaar balances.`;
+  voiceControls.style.display = 'flex';
+}
+
+// ================= COMPETITOR COMPARISON & GOOGLE MARKET SEARCH =================
+async function fetchMarketBenchmark(productId) {
+  const p = state.products.find(x => x.id === Number(productId));
+  const box = document.getElementById('benchmarkDetails');
+  if (!p) return;
+
+  box.innerHTML = `Fetching live market estimates for <b>${p.name}</b>...`;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/market-benchmark?product=${encodeURIComponent(p.name)}`);
+    if (res.ok) {
+      const data = await res.json();
+      state.currentGoogleSearchUrl = data.google_search_url;
+      box.innerHTML = `
+        <b>Commodity:</b> ${data.benchmark.matched_item} | <b>Estimated Market Range:</b> <span style="color:var(--primary); font-weight:700;">${data.benchmark.range}</span><br>
+        <b>Sources:</b> ${data.benchmark.sources.join(', ')} • <b>Our Price:</b> ${formatINR(p.price)}
+      `;
+      return;
+    }
+  } catch (e) {}
+
+  state.currentGoogleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(p.name + ' price online india')}`;
+  box.innerHTML = `Our Price for <b>${p.name}</b>: ${formatINR(p.price)}. Click "Check Live on Google" to see current prices in nearby supermarkets!`;
+}
+
+function openGooglePriceSearch() {
+  const sel = document.getElementById('compProductSelect');
+  const p = state.products.find(x => x.id === Number(sel.value));
+  const query = p ? `${p.name} price online india blinkit zepto dmart` : 'grocery prices online india';
+  window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+}
+
+function renderCompetitorTable() {
+  const tb = document.getElementById('competitorTableBody');
+  if (!state.competitors.length) {
+    tb.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999; padding:15px;">No competitor benchmark data entered.</td></tr>`;
+    return;
+  }
+
+  tb.innerHTML = state.competitors.map(c => {
+    const prod = state.products.find(p => p.id === c.product_id) || { price: 0 };
+    const diff = Number(c.competitor_price) - Number(prod.price);
+    return `<tr>
+      <td><b>${c.product_name}</b></td>
+      <td>${c.competitor_name}</td>
+      <td>${formatINR(c.competitor_price)}</td>
+      <td>${formatINR(prod.price)}</td>
+      <td style="color:${diff > 0 ? 'var(--green)' : 'var(--red)'}; font-weight:600;">
+        ${diff > 0 ? '+' : ''}${formatINR(diff)} (${diff > 0 ? 'We are cheaper' : 'They are cheaper'})
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function addCompetitorEntry() {
+  const sel = document.getElementById('compProductSelect');
+  const p = state.products.find(x => x.id === Number(sel.value));
+  if (!p) return;
+
+  const competitorName = document.getElementById('compShopName').value.trim();
+  const competitorPrice = Number(document.getElementById('compShopPrice').value);
+
+  if (!competitorName || isNaN(competitorPrice) || competitorPrice <= 0) {
+    alert("Please enter a competitor name and valid price.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/competitors`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId: p.id, productName: p.name, competitorName, competitorPrice })
+    });
+    if (res.ok) {
+      document.getElementById('compShopName').value = '';
+      document.getElementById('compShopPrice').value = '';
+      await refreshData();
+      return;
+    }
+  } catch (e) {}
+
+  state.competitors.unshift({ id: Date.now(), product_id: p.id, product_name: p.name, competitor_name: competitorName, competitor_price: competitorPrice });
+  renderCompetitorTable();
+}
+
+// Supplier Order WhatsApp Template
+function sendWholesalerOrderWhatsApp() {
+  const low = state.products.filter(p => Number(p.qty) <= Number(p.low_limit));
+  if (!low.length) {
+    alert("All products have adequate stock! No emergency orders needed.");
+    return;
+  }
+  const itemsList = low.map(p => `• ${p.name}: Need ${Math.max(10, p.low_limit * 3 - p.qty)} units (Current: ${p.qty})`).join('\n');
+  const msg = `Namaste Wholesaler / Distributor Ji,\nPlease dispatch the following urgent restock order for our store:\n\n${itemsList}\n\nPlease confirm availability and dispatch date. Thank you!`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// ================= OCR BILL SCANNING =================
+async function scanBillWithOCR() {
+  const fileInput = document.getElementById('ocrInputFile');
+  const status = document.getElementById('ocrScanStatus');
+  const output = document.getElementById('ocrOutputBox');
+
+  if (!fileInput.files || !fileInput.files[0]) {
+    alert("Please select or capture a bill image first.");
+    return;
+  }
+  if (!window.Tesseract) {
+    status.textContent = "OCR engine unavailable.";
+    return;
+  }
+
+  status.textContent = "Scanning image... 0%";
+  try {
+    const res = await Tesseract.recognize(fileInput.files[0], 'eng+hin', {
+      logger: m => {
+        if (m.status === 'recognizing text' && m.progress) {
+          status.textContent = `Scanning... ${Math.round(m.progress * 100)}%`;
+        }
+      }
+    });
+    output.value = res.data.text || '';
+    status.textContent = "✅ Scan complete! Review text above.";
+  } catch (err) {
+    status.textContent = "Scan error. Please try a clearer photo.";
+  }
+}
+
+// ================= COMMON UI & HELPERS =================
+function renderRecentTransactions() {
+  const tb = document.getElementById('quickTransactionsTable');
+  if (!state.transactions.length) {
+    tb.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#999; padding:20px;">No transactions recorded yet.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = state.transactions.slice(0, 15).map(t => {
+    const isSale = t.type === 'Sale';
+    return `<tr>
+      <td>${String(t.date).slice(0, 10)}</td>
+      <td><span class="tag ${isSale ? 'tag-green' : 'tag-red'}">${t.type}</span></td>
+      <td><b>${t.name}</b></td>
+      <td><span class="badge" style="background:#f1f5f9; color:#475569;">${t.payment_mode || 'Cash'}</span></td>
+      <td style="font-weight:700;">${formatINR(t.amount)}</td>
+      <td style="color:${isSale ? 'var(--green)' : 'var(--red)'}; font-weight:600;">
+        ${isSale ? '+' + formatINR(t.profit) : '-' + formatINR(t.amount)}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderInventoryTable() {
+  const tb = document.getElementById('inventoryMasterTable');
+  const search = (document.getElementById('inventorySearch').value || '').toLowerCase();
+  
+  let list = state.products;
+  if (state.lowStockOnly) list = list.filter(p => Number(p.qty) <= Number(p.low_limit));
+  if (search) list = list.filter(p => p.name.toLowerCase().includes(search));
+
+  if (!list.length) {
+    tb.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#999; padding:20px;">No matching products found.</td></tr>`;
+    return;
+  }
+
+  tb.innerHTML = list.map(p => {
+    const isLow = Number(p.qty) <= Number(p.low_limit);
+    const margin = p.cost > 0 ? Math.round(((p.price - p.cost) / p.price) * 100) : 0;
+    const totalVal = Number(p.qty) * Number(p.cost);
+
+    return `<tr>
+      <td><b>${p.name}</b></td>
+      <td style="font-weight:700; color:${isLow ? 'var(--red)' : 'var(--text)'};">${p.qty}</td>
+      <td>${formatINR(p.cost)}</td>
+      <td style="font-weight:600;">${formatINR(p.price)}</td>
+      <td><span class="badge" style="background:${margin >= 20 ? '#dcfce7' : '#fef3c7'}; color:${margin >= 20 ? '#166534' : '#92400e'}">${margin}%</span></td>
+      <td>${formatINR(totalVal)}</td>
+      <td><span class="tag ${isLow ? 'tag-red' : 'tag-green'}">${isLow ? 'Low Stock' : 'Adequate'}</span></td>
+      <td>
+        <button class="btn btn-sm btn-secondary" onclick="openEditProduct(${p.id})">✏️ Edit</button>
+        <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${p.id})">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterInventory() { renderInventoryTable(); }
+function toggleLowStockOnly() {
+  state.lowStockOnly = !state.lowStockOnly;
+  renderInventoryTable();
+}
+
+function openAddProductModal() {
+  document.getElementById('modalProductTitle').textContent = "➕ Add New Product";
+  document.getElementById('editProductId').value = "";
+  document.getElementById('mProdName').value = "";
+  document.getElementById('mProdQty').value = "10";
+  document.getElementById('mProdCost').value = "40";
+  document.getElementById('mProdPrice').value = "50";
+  document.getElementById('mProdLimit').value = "5";
+  openModal('modalProduct');
+}
+
+function openEditProduct(id) {
+  const p = state.products.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('modalProductTitle').textContent = "✏️ Edit Product";
+  document.getElementById('editProductId').value = p.id;
+  document.getElementById('mProdName').value = p.name;
+  document.getElementById('mProdQty').value = p.qty;
+  document.getElementById('mProdCost').value = p.cost;
+  document.getElementById('mProdPrice').value = p.price;
+  document.getElementById('mProdLimit').value = p.low_limit || 5;
+  openModal('modalProduct');
+}
+
+async function saveProductModal() {
+  const id = document.getElementById('editProductId').value;
+  const name = document.getElementById('mProdName').value.trim();
+  const qty = Number(document.getElementById('mProdQty').value);
+  const cost = Number(document.getElementById('mProdCost').value);
+  const price = Number(document.getElementById('mProdPrice').value);
+  const low_limit = Number(document.getElementById('mProdLimit').value);
+
+  if (!name || isNaN(qty) || isNaN(cost) || isNaN(price)) {
+    alert("Please fill all product fields correctly.");
+    return;
+  }
+
+  const payload = { name, qty, cost, price, low_limit };
+
+  try {
+    const url = id ? `${API_BASE}/api/products/${id}` : `${API_BASE}/api/products`;
+    const method = id ? 'PUT' : 'POST';
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      closeModal('modalProduct');
+      await refreshData();
+      return;
+    }
+  } catch (e) {}
+
+  closeModal('modalProduct');
+  renderAllUI();
+}
+
+async function deleteProduct(id) {
+  if (!confirm("Are you sure you want to delete this product?")) return;
+  try {
+    await fetch(`${API_BASE}/api/products/${id}`, { method: 'DELETE' });
+  } catch (e) {}
+  state.products = state.products.filter(p => p.id !== id);
+  renderAllUI();
+}
+
+function openExpenseModal() {
+  document.getElementById('mExpenseName').value = "";
+  document.getElementById('mExpenseAmount').value = "";
+  openModal('modalExpense');
+}
+
+async function saveExpenseModal() {
+  const name = document.getElementById('mExpenseName').value.trim();
+  const amount = Number(document.getElementById('mExpenseAmount').value);
+  const mode = document.getElementById('mExpenseMode').value;
+
+  if (!name || isNaN(amount) || amount <= 0) {
+    alert("Please enter description and positive amount.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/transactions/expense`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, amount, paymentMode: mode })
+    });
+    if (res.ok) {
+      closeModal('modalExpense');
+      await refreshData();
+      return;
+    }
+  } catch (e) {}
+
+  closeModal('modalExpense');
+  renderAllUI();
+}
+
+function renderKhataTable() {
+  const tb = document.getElementById('khataTableBody');
+  if (!state.credits.length) {
+    tb.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#999; padding:20px;">No pending credit balances in Khata.</td></tr>`;
+    return;
+  }
+
+  tb.innerHTML = state.credits.map(c => {
+    const isPaid = c.status === 'Paid';
+    return `<tr>
+      <td><b>${c.customer_name}</b></td>
+      <td>${c.phone || '-'}</td>
+      <td style="font-weight:700; color:${isPaid ? 'var(--green)' : 'var(--red)'};">${formatINR(c.amount)}</td>
+      <td>${c.due_date ? String(c.due_date).slice(0, 10) : 'Not set'}</td>
+      <td><span class="tag ${isPaid ? 'tag-green' : 'tag-red'}">${c.status || 'Pending'}</span></td>
+      <td>
+        ${!isPaid ? `<button class="btn btn-sm btn-success" onclick="settleCredit(${c.id})">✅ Settle</button>` : ''}
+        <button class="btn btn-sm btn-secondary" onclick="sendWhatsAppReminder('${c.customer_name}', '${c.phone}', ${c.amount})">💬 WhatsApp</button>
+        <button class="btn btn-sm btn-outline-danger" onclick="deleteCredit(${c.id})">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function addCreditEntry() {
+  const customerName = document.getElementById('khataName').value.trim();
+  const phone = document.getElementById('khataPhone').value.trim();
+  const amount = Number(document.getElementById('khataAmount').value);
+  const dueDate = document.getElementById('khataDueDate').value;
+
+  if (!customerName || isNaN(amount) || amount <= 0) {
+    alert("Please enter customer name and valid credit amount.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/credits`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customerName, phone, amount, dueDate })
+    });
+    if (res.ok) {
+      document.getElementById('khataName').value = '';
+      document.getElementById('khataPhone').value = '';
+      document.getElementById('khataAmount').value = '';
+      await refreshData();
+      return;
+    }
+  } catch (e) {}
+
+  state.credits.unshift({ id: Date.now(), customer_name: customerName, phone, amount, due_date: dueDate, status: 'Pending' });
+  renderAllUI();
+}
+
+async function settleCredit(id) {
+  if (!confirm("Mark this credit as settled / paid?")) return;
+  try {
+    await fetch(`${API_BASE}/api/credits/${id}/settle`, { method: 'PUT' });
+  } catch (e) {}
+  const item = state.credits.find(c => c.id === id);
+  if (item) item.status = 'Paid';
+  renderAllUI();
+}
+
+async function deleteCredit(id) {
+  if (!confirm("Delete this credit record?")) return;
+  try {
+    await fetch(`${API_BASE}/api/credits/${id}`, { method: 'DELETE' });
+  } catch (e) {}
+  state.credits = state.credits.filter(c => c.id !== id);
+  renderAllUI();
+}
+
+function sendWhatsAppReminder(name, phone, amount) {
+  let template = document.getElementById('whatsappTemplate').value;
+  template = template.replace('{NAME}', name).replace('{AMOUNT}', amount);
+  const cleanPhone = (phone || '').replace(/\D/g, '');
+  const url = cleanPhone 
+    ? `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(template)}`
+    : `https://wa.me/?text=${encodeURIComponent(template)}`;
+  window.open(url, '_blank');
+}
+
+function renderSalesChart() {
+  const container = document.getElementById('salesChartContainer');
+  const days = {};
+  state.transactions.filter(t => t.type === 'Sale').forEach(t => {
+    const d = String(t.date).slice(5, 10);
+    days[d] = (days[d] || 0) + Number(t.amount || 0);
+  });
+
+  const entries = Object.entries(days).slice(-7);
+  if (!entries.length) {
+    container.innerHTML = `<div style="text-align:center; color:#999; padding:20px;">No sales history available to chart.</div>`;
+    return;
+  }
+
+  const maxVal = Math.max(1, ...entries.map(e => e[1]));
+  container.innerHTML = entries.map(([date, val]) => `
+    <div style="display:grid; grid-template-columns: 50px 1fr 80px; align-items:center; gap:10px; margin-bottom:8px; font-size:12.5px;">
+      <span style="color:var(--muted);">${date}</span>
+      <div style="height:14px; background:#e2e8f0; border-radius:10px; overflow:hidden;">
+        <div style="height:100%; width:${(val/maxVal)*100}%; background:var(--primary); border-radius:10px;"></div>
+      </div>
+      <b style="text-align:right;">${formatINR(val)}</b>
+    </div>
+  `).join('');
+}
+
+function refreshDeadStock() {
+  const area = document.getElementById('deadStockAlertArea');
+  const salesMap = {};
+  state.transactions.filter(t => t.type === 'Sale').forEach(t => {
+    const name = t.name.split(' × ')[0];
+    salesMap[name] = (salesMap[name] || 0) + 1;
+  });
+
+  const dead = state.products.filter(p => !salesMap[p.name] || salesMap[p.name] <= 1);
+  if (!dead.length) {
+    area.innerHTML = `<span style="color:var(--green);">✅ Great job! All products have active sales velocity.</span>`;
+    return;
+  }
+
+  area.innerHTML = `⚠️ <b>${dead.length} Potential Slow-Moving Product(s) detected:</b><br>` +
+    dead.map(p => `• <b>${p.name}</b> (Qty: ${p.qty}, Worth: ${formatINR(p.qty * p.cost)}) — Consider running a combo discount to unlock capital.`).join('<br>');
+}
+
+function generateFestivalForecast() {
+  const fest = document.getElementById('festSelect').value;
+  const budget = Number(document.getElementById('festBudget').value) || 10000;
+  const footfall = Number(document.getElementById('festFootfall').value) || 100;
+  const box = document.getElementById('festResultBox');
+
+  box.style.display = 'block';
+  box.innerHTML = `
+    <b>🎉 ${fest} Readiness Blueprint</b><br>
+    • Estimated Spend Per Shopper: <b>${formatINR(budget / footfall)}</b><br>
+    • Recommended Stock Buffer: Restock staples & festive gifts by <b>+25%</b> 1 week prior.<br>
+    • Digital Readiness: Display QR codes clearly on checkout counter.<br>
+    • Action Checklist: Lock supplier quotes early to avoid festive price hikes.
+  `;
+}
+
+function calculateBreakEven() {
+  const fixed = Number(document.getElementById('beFixed').value);
+  const sell = Number(document.getElementById('beSell').value);
+  const cost = Number(document.getElementById('beCost').value);
+  const box = document.getElementById('beResultBox');
+
+  const margin = sell - cost;
+  if (margin <= 0) {
+    box.style.display = 'block';
+    box.textContent = "Selling price must be higher than variable cost!";
+    return;
+  }
+
+  const units = Math.ceil(fixed / margin);
+  box.style.display = 'block';
+  box.innerHTML = `Break-Even Quantity: <b>${units} units / month</b> (${formatINR(units * sell)} sales) needed to cover overheads.`;
+}
+
+async function openZReportModal() {
+  const body = document.getElementById('zReportBody');
+  body.innerHTML = "Computing closure metrics for today...";
+  openModal('modalZReport');
+
+  try {
+    const res = await fetch(`${API_BASE}/api/reports/day-end`);
+    if (res.ok) {
+      const r = await res.json();
+      body.innerHTML = `
+        <div style="border-bottom:1px dashed #cbd5e1; padding-bottom:8px; margin-bottom:8px;">
+          <b>Date:</b> ${r.date} | <b>Total Bills:</b> ${r.salesCount}
+        </div>
+        <div style="display:flex; justify-content:space-between;"><span>Total Sales Revenue:</span><b>${formatINR(r.totalSales)}</b></div>
+        <div style="display:flex; justify-content:space-between; color:var(--muted); font-size:12px;"><span>• Cash Sales:</span><span>${formatINR(r.totalCashSales)}</span></div>
+        <div style="display:flex; justify-content:space-between; color:var(--muted); font-size:12px;"><span>• UPI / Digital:</span><span>${formatINR(r.totalUpiSales)}</span></div>
+        <div style="display:flex; justify-content:space-between; color:var(--muted); font-size:12px;"><span>• Udhaar (Credit):</span><span>${formatINR(r.totalUdhaarSales)}</span></div>
+        <div style="display:flex; justify-content:space-between; margin-top:8px;"><span>Total Expenses Deducted:</span><span style="color:var(--red); font-weight:600;">-${formatINR(r.totalExpenses)}</span></div>
+        <div style="border-top:1px solid #e2e8f0; margin-top:8px; padding-top:8px; display:flex; justify-content:space-between; font-size:15px;">
+          <span>Net Cash in Register:</span><b style="color:var(--green);">${formatINR(r.netCashInHand)}</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; margin-top:4px;">
+          <span>Estimated Operating Profit:</span><b>${formatINR(r.estimatedProfit)}</b>
+        </div>
+      `;
+      return;
+    }
+  } catch (e) {}
+
+  body.innerHTML = `<b>Today's Summary:</b><br>Sales Recorded: ${document.getElementById('kpiTodaySales').textContent}<br>Estimated Net Profit: ${document.getElementById('kpiNetProfit').textContent}`;
+}
+
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.mobile-nav-item').forEach(b => b.classList.remove('active'));
+  
+  const target = document.getElementById(`tab-${tabId}`);
+  if (target) target.classList.add('active');
+  
+  if (btn) btn.classList.add('active');
+
+  const tabIndexMap = { dashboard: 0, pos: 1, inventory: 2, khata: 3, analytics: 4 };
+  const mobileButtons = document.querySelectorAll('.mobile-nav-item');
+  if (mobileButtons[tabIndexMap[tabId]]) {
+    mobileButtons[tabIndexMap[tabId]].classList.add('active');
+  }
+
+  const titles = {
+    dashboard: 'Executive Command Center',
+    pos: 'Smart Billing & Point-of-Sale (POS)',
+    inventory: 'Inventory Master & Stock Intelligence',
+    khata: 'Customer Khata & Udhaar Book',
+    analytics: 'Market Intelligence & Live Benchmark'
+  };
+  document.getElementById('pageHeading').textContent = titles[tabId] || 'Command Center';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function openShareModal() {
+  const publicUrl = "https://ac81b9e65c37cb.lhr.life";
+  const currentUrl = window.location.href.startsWith("http") && !window.location.href.includes("localhost") && !window.location.href.includes("127.0.0.1")
+    ? window.location.href
+    : publicUrl;
+    
+  document.getElementById('shareQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(currentUrl)}`;
+  openModal('modalShare');
+}
+
+function copyShareLink(url) {
+  navigator.clipboard.writeText(url).then(() => {
+    alert("✅ Link copied to clipboard!\nOpen on your phone or send to anyone:\n" + url);
+  }).catch(() => {
+    prompt("Copy this link:", url);
+  });
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function changeLanguage() {
+  const l = document.getElementById('appLanguage').value;
+  if (l === 'hi') {
+    document.getElementById('pageHeading').textContent = "व्यापार साथी - मुख्य डैशबोर्ड";
+  } else if (l === 'mr') {
+    document.getElementById('pageHeading').textContent = "व्यापार साथी - मुख्य डॅशबोर्ड";
+  } else {
+    document.getElementById('pageHeading').textContent = "Executive Command Center";
+  }
+}
+</script>
+</body>
+</html>
